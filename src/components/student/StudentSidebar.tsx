@@ -1,90 +1,111 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  BookOpen,
-  ShoppingCart,
-  BrainCircuit,
-  Languages,
-  Settings,
+import { cn } from '@/lib/utils';
+import { 
+  BookOpen, 
+  Home, 
+  ShoppingCart, 
+  Layers,
+  Brain,
+  Globe,
   LogOut
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 
-const StudentSidebar: React.FC = () => {
+const StudentSidebar = () => {
   const { t } = useLanguage();
+  const { profile } = useAuth();
   const location = useLocation();
-  
-  const menuItems = [
+
+  const navItems = [
     {
-      name: t('dashboard'),
-      icon: <LayoutDashboard className="h-5 w-5" />,
       href: '/student/dashboard',
+      icon: Home,
+      label: t('dashboard')
     },
     {
-      name: t('myEnrollments'),
-      icon: <BookOpen className="h-5 w-5" />,
       href: '/student/my-enrollments',
+      icon: Layers,
+      label: t('myEnrollments')
     },
     {
-      name: t('buyCourses'),
-      icon: <ShoppingCart className="h-5 w-5" />,
       href: '/student/buy-courses',
+      icon: ShoppingCart,
+      label: t('buyCourses')
     },
     {
-      name: t('aiTutor'),
-      icon: <BrainCircuit className="h-5 w-5" />,
       href: '/student/ai-tutor',
+      icon: Brain,
+      label: 'AI Tutor'
     },
     {
-      name: t('languageBud'),
-      icon: <Languages className="h-5 w-5" />,
       href: '/student/language-bud',
-    },
-    {
-      name: t('settings'),
-      icon: <Settings className="h-5 w-5" />,
-      href: '/student/settings',
-    },
+      icon: Globe,
+      label: 'Language Bud'
+    }
   ];
 
   return (
-    <div className="min-h-screen w-64 bg-sidebar border-r border-sidebar-border hidden md:block">
-      <div className="p-4">
-        <h2 className="text-xl font-bold hero-gradient">{t('appName')}</h2>
+    <div className="hidden md:flex flex-col w-64 bg-card border-r border-border z-20 fixed top-0 bottom-0">
+      <div className="p-6">
+        <h1 className="text-xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-edu-purple to-edu-blue">
+          GYAN SETHU
+        </h1>
       </div>
       
-      <div className="px-3 py-2">
-        <nav className="space-y-1">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.href;
-            
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                }`}
-              >
-                <span className="mr-3">{item.icon}</span>
-                {item.name}
-              </Link>
-            );
-          })}
-        </nav>
+      <div className="px-4 mb-4">
+        {profile && (
+          <div className="flex items-center p-3 bg-accent/50 rounded-lg">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-edu-purple/20 flex items-center justify-center">
+              {profile.avatar_url ? (
+                <img 
+                  src={profile.avatar_url} 
+                  alt={profile.first_name || 'User'} 
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-edu-purple font-semibold">
+                  {profile.first_name?.[0] || 'S'}
+                </span>
+              )}
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">
+                {profile.first_name ? `${profile.first_name} ${profile.last_name || ''}` : 'Student'}
+              </p>
+              <p className="text-xs text-muted-foreground">{t('studentAccount')}</p>
+            </div>
+          </div>
+        )}
       </div>
       
-      <div className="absolute bottom-0 w-64 p-4 border-t border-sidebar-border">
+      <nav className="flex-1 px-4 space-y-1">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            to={item.href}
+            className={cn(
+              "flex items-center px-4 py-3 text-sm font-medium rounded-lg",
+              location.pathname === item.href
+                ? "bg-edu-purple/10 text-edu-purple"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+            )}
+          >
+            <item.icon className="h-5 w-5 mr-3" />
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+      
+      <div className="p-4 mt-auto">
         <Link
           to="/logout"
-          className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+          className="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
         >
           <LogOut className="h-5 w-5 mr-3" />
-          {t('logout')}
+          {t('signOut')}
         </Link>
       </div>
     </div>

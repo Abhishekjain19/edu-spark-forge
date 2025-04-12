@@ -16,8 +16,15 @@ import SignUp from "./pages/auth/SignUp";
 import Logout from "./pages/auth/Logout";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import BuyCourses from "./pages/student/BuyCourses";
+import MyEnrollments from "./pages/student/MyEnrollments";
+import AITutor from "./pages/student/AITutor";
+import LanguageBud from "./pages/student/LanguageBud";
+import CourseViewer from "./pages/student/CourseViewer";
 import EducatorDashboard from "./pages/educator/EducatorDashboard";
 import UploadCourse from "./pages/educator/UploadCourse";
+import MyCourses from "./pages/educator/MyCourses";
+import EducatorRevenue from "./pages/educator/Revenue";
+import EducatorBuyCourses from "./pages/educator/BuyCourses";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -49,9 +56,24 @@ const App = () => (
                       <BuyCourses />
                     </ProtectedRoute>
                   } />
-                  <Route path="/buy-courses" element={
+                  <Route path="/student/my-enrollments" element={
                     <ProtectedRoute requiredRole="student">
-                      <BuyCourses />
+                      <MyEnrollments />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/student/ai-tutor" element={
+                    <ProtectedRoute requiredRole="student">
+                      <AITutor />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/student/language-bud" element={
+                    <ProtectedRoute requiredRole="student">
+                      <LanguageBud />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/student/course/:courseId" element={
+                    <ProtectedRoute requiredRole="student">
+                      <CourseViewer />
                     </ProtectedRoute>
                   } />
                   
@@ -64,6 +86,21 @@ const App = () => (
                   <Route path="/educator/upload-course" element={
                     <ProtectedRoute requiredRole="educator">
                       <UploadCourse />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/educator/my-courses" element={
+                    <ProtectedRoute requiredRole="educator">
+                      <MyCourses />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/educator/revenue" element={
+                    <ProtectedRoute requiredRole="educator">
+                      <EducatorRevenue />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/educator/buy-courses" element={
+                    <ProtectedRoute requiredRole="educator">
+                      <EducatorBuyCourses />
                     </ProtectedRoute>
                   } />
                   
