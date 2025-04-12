@@ -29,6 +29,13 @@ export const en = {
   roleStudent: "Student",
   roleEducator: "Educator",
   selectRole: "Select your role",
+  signOut: "Sign Out",
+  
+  // User Types
+  student: "Student",
+  educator: "Educator",
+  studentAccount: "Student Account",
+  educatorAccount: "Educator Account",
   
   // Navigation
   dashboard: "Dashboard",

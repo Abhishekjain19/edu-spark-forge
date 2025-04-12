@@ -29,6 +29,13 @@ export const kn = {
   roleStudent: "ವಿದ್ಯಾರ್ಥಿ",
   roleEducator: "ಶಿಕ್ಷಕ",
   selectRole: "ನಿಮ್ಮ ಪಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  signOut: "ಸೈನ್ ಔಟ್",
+  
+  // User Types
+  student: "ವಿದ್ಯಾರ್ಥಿ",
+  educator: "ಶಿಕ್ಷಕ",
+  studentAccount: "ವಿದ್ಯಾರ್ಥಿ ಖಾತೆ",
+  educatorAccount: "ಶಿಕ್ಷಕ ಖಾತೆ",
   
   // Navigation
   dashboard: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
