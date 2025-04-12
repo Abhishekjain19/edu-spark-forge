@@ -1,7 +1,7 @@
 
 export const en = {
   // Common
-  appName: "EduSparkForge",
+  appName: "GYAN SETHU",
   login: "Login",
   signup: "Sign Up",
   logout: "Logout",
@@ -24,7 +24,7 @@ export const en = {
   // Auth
   loginTitle: "Welcome Back",
   loginSubtitle: "Sign in to continue your learning journey",
-  signupTitle: "Join EduSparkForge",
+  signupTitle: "Join GYAN SETHU",
   signupSubtitle: "Create an account to start learning",
   roleStudent: "Student",
   roleEducator: "Educator",
