@@ -85,17 +85,23 @@ const MyEnrollments: React.FC = () => {
             if (lectureCountError) throw lectureCountError;
             
             // Get completed lecture count
-            const { count: completedLecturesCount, error: completedError } = await supabase
-              .from('lecture_watch_logs')
-              .select('id', { count: 'exact' })
-              .eq('user_id', user.id)
-              .eq('completed', true)
-              .in('lecture_id', 
-                supabase
-                  .from('lecture_videos')
-                  .select('id')
-                  .eq('course_id', enrollment.course_id)
-              );
+            // Fix: Don't use the filter builder as a value for the 'in' method
+            // First, get lecture IDs for the course
+            const { data: lectureIds } = await supabase
+              .from('lecture_videos')
+              .select('id')
+              .eq('course_id', enrollment.course_id);
+            
+            // Then use these IDs to filter the watch logs
+            const { count: completedLecturesCount, error: completedError } = 
+              lectureIds && lectureIds.length > 0
+                ? await supabase
+                    .from('lecture_watch_logs')
+                    .select('id', { count: 'exact' })
+                    .eq('user_id', user.id)
+                    .eq('completed', true)
+                    .in('lecture_id', lectureIds.map(l => l.id))
+                : { count: 0, error: null };
               
             if (completedError) throw completedError;
             

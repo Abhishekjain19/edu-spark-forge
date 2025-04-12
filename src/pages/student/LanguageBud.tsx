@@ -4,7 +4,7 @@ import {
   Globe, 
   Upload, 
   FileText, 
-  VolumeUp,
+  Volume2,
   Loader2, 
   X
 } from 'lucide-react';
@@ -430,7 +430,7 @@ const LanguageBud: React.FC = () => {
                               </>
                             ) : (
                               <>
-                                <VolumeUp className="h-4 w-4 mr-2" />
+                                <Volume2 className="h-4 w-4 mr-2" />
                                 Read Aloud
                               </>
                             )}

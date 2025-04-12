@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Brain, 
   FileText, 
   HelpCircle, 
-  Cards,
+  BookOpenCheck,
   Loader2
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -119,10 +120,16 @@ const AITutor: React.FC = () => {
           
         if (error) throw error;
         
-        setAiOutputs(data);
+        // Explicitly cast the output_type to the expected type
+        const typedData = data.map(item => ({
+          ...item,
+          output_type: item.output_type as 'note' | 'quiz' | 'flashcard'
+        }));
+        
+        setAiOutputs(typedData);
         
         // Set the most recent output of the current type as the current output
-        const typeOutput = data.find(output => output.output_type === tab);
+        const typeOutput = typedData.find(output => output.output_type === tab);
         if (typeOutput) {
           setCurrentOutput(typeOutput);
         } else {
@@ -270,9 +277,15 @@ const AITutor: React.FC = () => {
         
       if (error) throw error;
       
+      // Explicitly cast the output_type for type safety
+      const typedData = {
+        ...data,
+        output_type: data.output_type as 'note' | 'quiz' | 'flashcard'
+      };
+        
       // Update the state
-      setAiOutputs(prev => [data, ...prev]);
-      setCurrentOutput(data);
+      setAiOutputs(prev => [typedData, ...prev]);
+      setCurrentOutput(typedData);
       setTab(type);
       
       toast({
@@ -374,7 +387,7 @@ const AITutor: React.FC = () => {
                       {isGenerating && tab === 'flashcard' ? (
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       ) : (
-                        <Cards className="h-4 w-4 mr-2" />
+                        <BookOpenCheck className="h-4 w-4 mr-2" />
                       )}
                       Generate Flashcards
                     </Button>
@@ -488,7 +501,7 @@ const AITutor: React.FC = () => {
                         </div>
                       ) : (
                         <div className="text-center py-8">
-                          <Cards className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                          <BookOpenCheck className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                           <p className="text-muted-foreground">No flashcards generated yet. Click "Generate Flashcards" to create study cards.</p>
                         </div>
                       )}
@@ -503,16 +516,5 @@ const AITutor: React.FC = () => {
     </div>
   );
 };
-
-const Link = ButtonLink;
-
-// Helper component
-function ButtonLink({ to, children, ...props }: any) {
-  return (
-    <Link to={to} {...props}>
-      {children}
-    </Link>
-  );
-}
 
 export default AITutor;

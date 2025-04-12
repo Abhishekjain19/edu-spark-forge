@@ -75,7 +75,7 @@ const StudentSidebar = () => {
               <p className="text-sm font-medium">
                 {profile.first_name ? `${profile.first_name} ${profile.last_name || ''}` : 'Student'}
               </p>
-              <p className="text-xs text-muted-foreground">{t('studentAccount')}</p>
+              <p className="text-xs text-muted-foreground">{t('student')}</p>
             </div>
           </div>
         )}
@@ -105,7 +105,7 @@ const StudentSidebar = () => {
           className="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
         >
           <LogOut className="h-5 w-5 mr-3" />
-          {t('signOut')}
+          {t('logout')}
         </Link>
       </div>
     </div>
