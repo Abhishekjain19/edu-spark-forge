@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Eye, 
@@ -13,66 +13,39 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 
 const SignUp: React.FC = () => {
   const { t } = useLanguage();
-  const { toast } = useToast();
+  const { signUp, isLoading, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState<'student' | 'educator'>('student');
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/student/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
     if (password !== confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: t('error'),
-        description: "Passwords do not match",
-      });
+      setError("Passwords do not match");
       return;
     }
     
-    setIsSubmitting(true);
-
-    // Here we would call Supabase authentication
-    try {
-      // Simulating API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // This would be replaced with actual Supabase auth
-      if (email && password && role) {
-        toast({
-          title: t('success'),
-          description: "Account created successfully!",
-        });
-        
-        // Navigate to appropriate dashboard based on role
-        navigate(role === 'student' ? '/student/dashboard' : '/educator/dashboard');
-      } else {
-        toast({
-          variant: "destructive",
-          title: t('error'),
-          description: "Please fill all required fields",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: t('error'),
-        description: "Failed to create account. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await signUp(email, password, role);
   };
 
   return (
@@ -90,6 +63,12 @@ const SignUp: React.FC = () => {
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
+              {error && (
+                <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-1">
                 <Label htmlFor="email">{t('email')}</Label>
                 <div className="relative">
@@ -179,9 +158,9 @@ const SignUp: React.FC = () => {
               <Button 
                 type="submit" 
                 className="w-full btn-primary-gradient" 
-                disabled={isSubmitting}
+                disabled={isLoading}
               >
-                {isSubmitting ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {t('loading')}

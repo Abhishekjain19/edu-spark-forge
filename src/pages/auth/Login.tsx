@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Eye, 
@@ -11,60 +11,34 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import NavBar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 
 const Login: React.FC = () => {
   const { t } = useLanguage();
-  const { toast } = useToast();
+  const { signIn, isLoading, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/student/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    // Here we would call Supabase authentication
-    try {
-      // Simulating API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // This would be replaced with actual Supabase auth
-      if (email && password) {
-        toast({
-          title: t('success'),
-          description: "Successfully logged in!",
-        });
-        
-        // Navigate to appropriate dashboard based on role
-        // This would use the actual user role from Supabase
-        navigate('/student/dashboard');
-      } else {
-        toast({
-          variant: "destructive",
-          title: t('error'),
-          description: "Invalid email or password",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: t('error'),
-        description: "Failed to log in. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await signIn(email, password);
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      <NavBar isAuthenticated={false} />
+      <NavBar isAuthenticated={!!user} />
       
       <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
@@ -129,9 +103,9 @@ const Login: React.FC = () => {
               <Button 
                 type="submit" 
                 className="w-full btn-primary-gradient" 
-                disabled={isSubmitting}
+                disabled={isLoading}
               >
-                {isSubmitting ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {t('loading')}

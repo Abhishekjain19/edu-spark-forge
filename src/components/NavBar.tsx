@@ -10,18 +10,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useLanguage, LanguageCode } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 type NavBarProps = {
-  isAuthenticated: boolean;
-  userRole?: string;
-  userName?: string;
+  isAuthenticated?: boolean;
 };
 
-const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, userRole, userName }) => {
+const NavBar: React.FC<NavBarProps> = ({ isAuthenticated: isAuthProp }) => {
   const { theme, toggleTheme } = useTheme();
   const { t, language, changeLanguage } = useLanguage();
+  const { user, profile } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  // Use the authenticated status from the context if not provided via props
+  const isAuthenticated = isAuthProp !== undefined ? isAuthProp : !!user;
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -69,11 +72,11 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, userRole, userName }) 
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost">{userName || userRole}</Button>
+                  <Button variant="ghost">{profile?.first_name || profile?.role || 'User'}</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
-                    <Link to={userRole === 'student' ? '/student/dashboard' : '/educator/dashboard'}>
+                    <Link to={profile?.role === 'student' ? '/student/dashboard' : '/educator/dashboard'}>
                       {t('dashboard')}
                     </Link>
                   </DropdownMenuItem>
@@ -135,7 +138,7 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, userRole, userName }) 
             {isAuthenticated ? (
               <>
                 <Link 
-                  to={userRole === 'student' ? '/student/dashboard' : '/educator/dashboard'} 
+                  to={profile?.role === 'student' ? '/student/dashboard' : '/educator/dashboard'} 
                   className="px-4 py-2 rounded-md hover:bg-accent"
                   onClick={toggleMobileMenu}
                 >
